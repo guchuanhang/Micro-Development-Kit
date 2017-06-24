@@ -14,12 +14,12 @@
 
 TestServer::TestServer()
 {
-	SetIOThreadCount(4);//ÉèÖÃÍøÂçIOÏß³ÌÊıÁ¿
-	SetWorkThreadCount(4);//ÉèÖÃ¹¤×÷Ïß³ÌÊı
+	SetIOThreadCount(4);//è®¾ç½®ç½‘ç»œIOçº¿ç¨‹æ•°é‡
+	SetWorkThreadCount(4);//è®¾ç½®å·¥ä½œçº¿ç¨‹æ•°
 	Listen(8888);
 //	Listen(6666);
 //	Listen(9999);
-//	Connect("127.0.0.1", 10086, 5);//Á¬½Ó×ÔÉí£¬Î´²âÊÔ£¬²»½¨ÒéÕâÃ´×ö
+//	Connect("127.0.0.1", 10086, 5);//è¿æ¥è‡ªèº«ï¼Œæœªæµ‹è¯•ï¼Œä¸å»ºè®®è¿™ä¹ˆåš
 }
 
 TestServer::~TestServer()
@@ -28,13 +28,13 @@ TestServer::~TestServer()
 }
 
 /*
- *	·şÎñÆ÷Ö÷Ïß³Ì
+ *	æœåŠ¡å™¨ä¸»çº¿ç¨‹
  */
 void* TestServer::Main(void* pParam)
 {
 	while ( IsOk() )
 	{
-		//Ö´ĞĞÒµÎñ
+		//æ‰§è¡Œä¸šåŠ¡
 #ifndef WIN32
 		usleep( 1000 * 1000 );
 #else
@@ -46,9 +46,9 @@ void* TestServer::Main(void* pParam)
 }
 
 /**
- * ĞÂÁ¬½ÓÊÂ¼ş»Øµ÷·½·¨
+ * æ–°è¿æ¥äº‹ä»¶å›è°ƒæ–¹æ³•
  * 
- * ÅÉÉúÀàÊµÏÖ¾ßÌåÁ¬½ÓÒµÎñ´¦Àí
+ * æ´¾ç”Ÿç±»å®ç°å…·ä½“è¿æ¥ä¸šåŠ¡å¤„ç†
  * 
  */
 void TestServer::OnConnect(mdk::NetHost& host)
@@ -57,9 +57,9 @@ void TestServer::OnConnect(mdk::NetHost& host)
 }
 
 /**
- * Á¬½Ó¹Ø±ÕÊÂ¼ş£¬»Øµ÷·½·¨
+ * è¿æ¥å…³é—­äº‹ä»¶ï¼Œå›è°ƒæ–¹æ³•
  * 
- * ÅÉÉúÀàÊµÏÖ¾ßÌå¶Ï¿ªÁ¬½ÓÒµÎñ´¦Àí
+ * æ´¾ç”Ÿç±»å®ç°å…·ä½“æ–­å¼€è¿æ¥ä¸šåŠ¡å¤„ç†
  * 
  */
 void TestServer::OnCloseConnect(mdk::NetHost &host)
@@ -69,22 +69,29 @@ void TestServer::OnCloseConnect(mdk::NetHost &host)
 
 void TestServer::OnMsg(mdk::NetHost &host)
 {
-	//¼ÙÉè±¨ÎÄ½á¹¹Îª£º2byte±íÊ¾Êı¾İ³¤¶È+±¨ÎÄÊı¾İ
-	unsigned char c[256];
-	/*
-		¶ÁÈ¡Êı¾İ³¤¶È£¬³¤¶È²»×ã2byteÖ±½Ó·µ»Ø£¬µÈ´ıÏÂ´ÎÊı¾İµ½´ïÊ±ÔÙ¶ÁÈ¡
-		Ö»¶ÁÈ¡2byte£¬false±íÊ¾£¬²»½«¶ÁÈ¡µ½µÄÊı¾İ´Ó»º³åÖĞÉ¾³ı£¬ÏÂ´Î»¹ÊÇ¿ÉÒÔ¶Áµ½
-	*/
-	if ( !host.Recv( c, 2, false ) ) return;
-	unsigned short len = 0;
-	memcpy( &len, c, 2 );//µÃµ½Êı¾İ³¤¶È
-	len += 2;//±¨ÎÄ³¤¶È = ±¨ÎÄÍ·³¤¶È+Êı¾İ³¤¶È
-	if ( len > 256 ) 
-	{
-		printf( "close client:invaild fromat msg\n" );
-		host.Close();
-		return;
-	}
-	if ( !host.Recv(c, len) ) return;//½«±¨ÎÄ¶Á³ö£¬²¢´Ó½ÓÊÕ»º³åÖĞÉ¾³ı£¬¾ø¶Ô²»¿ÉÄÜ³¤¶È²»¹»£¬¼´Ê¹Á¬½ÓÒÑ¾­¶Ï¿ª£¬Ò²¿ÉÒÔ¶Áµ½Êı¾İ
-	host.Send( c, len );//ÊÕµ½ÏûÏ¢Ô­Ñù»Ø¸´
+        //å‡è®¾æŠ¥æ–‡ç»“æ„ä¸ºï¼š2byteè¡¨ç¤ºæ•°æ®é•¿åº¦+æŠ¥æ–‡æ•°æ®
+        unsigned char c[256];
+        /*
+                è¯»å–æ•°æ®é•¿åº¦ï¼Œé•¿åº¦ä¸è¶³2byteç›´æ¥è¿”å›ï¼Œç­‰å¾…ä¸‹æ¬¡æ•°æ®åˆ°è¾¾æ—¶å†è¯»å–
+                åªè¯»å–2byteï¼Œfalseè¡¨ç¤ºï¼Œä¸å°†è¯»å–åˆ°çš„æ•°æ®ä»ç¼“å†²ä¸­åˆ é™¤ï¼Œä¸‹æ¬¡è¿˜æ˜¯å¯ä»¥è¯»åˆ°
+        */
+        if ( !host.Recv( c, 2, false ) ) return;
+        unsigned short len = 0;
+        memcpy( &len, c, 2 );//å¾—åˆ°æ•°æ®é•¿åº¦
+        len += 2;//æŠ¥æ–‡é•¿åº¦ = æŠ¥æ–‡å¤´é•¿åº¦+æ•°æ®é•¿åº¦
+/*
+        if ( len > 256 ) 
+        {
+                printf( "close client:invaild fromat msg\n" );
+                host.Close();
+                return;
+        }
+*/
+      //  std::cout<<"c:"<<c<<" len="<<len<<std::endl;
+        //if ( !host.Recv(c, len) ) return;//å°†æŠ¥æ–‡è¯»å‡ºï¼Œå¹¶ä»æ¥æ”¶ç¼“å†²ä¸­åˆ é™¤ï¼Œç»å¯¹ä¸å¯èƒ½é•¿åº¦ä¸å¤Ÿï¼Œå³ä½¿è¿æ¥>å·²ç»æ–­å¼€ï¼Œä¹Ÿå¯ä»¥è¯»åˆ°æ•°æ®
+        if ( !host.Recv(c, 2) ) return;//å°†æŠ¥æ–‡è¯»å‡ºï¼Œå¹¶ä»æ¥æ”¶ç¼“å†²ä¸­åˆ é™¤ï¼Œç»å¯¹ä¸å¯èƒ½é•¿åº¦ä¸å¤Ÿï¼Œå³ä½¿è¿æ¥å·²ç»>æ–­å¼€ï¼Œä¹Ÿå¯ä»¥è¯»åˆ°æ•°æ®
+       // std::cout<<"c:"<<c<<" len="<<len<<std::endl;
+        //host.Send( c, len );//æ”¶åˆ°æ¶ˆæ¯åŸæ ·å›å¤
+        host.Send( c, 2 );//æ”¶åˆ°æ¶ˆæ¯åŸæ ·å›å¤
 }
+
